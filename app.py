@@ -76,14 +76,15 @@ def inject_css() -> None:
         """
         <style>
             :root {
-                --case-navy: #18202b;
-                --case-ink: #253040;
-                --case-border: #d8dee8;
-                --case-panel: #f7f9fc;
-                --case-accent: #2d6cdf;
+                --case-navy: #111820;
+                --case-ink: #1d2937;
+                --case-border: #c8d2df;
+                --case-panel: #f3f6f9;
+                --case-accent: #1f7a8c;
                 --case-danger: #b42318;
                 --case-warn: #b54708;
                 --case-ok: #067647;
+                --case-lime: #9fd356;
             }
 
             .main .block-container {
@@ -97,7 +98,11 @@ def inject_css() -> None:
             }
 
             .hero {
-                background: linear-gradient(135deg, #172033 0%, #263449 56%, #36546e 100%);
+                background:
+                    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+                    linear-gradient(135deg, #0d131a 0%, #172333 58%, #223a42 100%);
+                background-size: 28px 28px, 28px 28px, auto;
                 border: 1px solid rgba(255,255,255,0.16);
                 border-radius: 8px;
                 padding: 28px 30px;
@@ -130,7 +135,7 @@ def inject_css() -> None:
             .badge {
                 display: inline-flex;
                 align-items: center;
-                border-radius: 999px;
+                border-radius: 4px;
                 padding: 6px 10px;
                 background: rgba(255,255,255,0.11);
                 border: 1px solid rgba(255,255,255,0.18);
@@ -172,6 +177,60 @@ def inject_css() -> None:
                 border-radius: 8px;
                 padding: 18px;
                 margin-bottom: 14px;
+            }
+
+            .case-strip {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 10px;
+                margin: 0 0 22px 0;
+            }
+
+            .case-tile {
+                border: 1px solid var(--case-border);
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 13px 14px;
+                box-shadow: 0 8px 20px rgba(27, 39, 55, 0.05);
+            }
+
+            .case-tile span {
+                display: block;
+                color: #667085;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                font-weight: 800;
+            }
+
+            .case-tile strong {
+                display: block;
+                color: var(--case-ink);
+                margin-top: 5px;
+                word-break: break-word;
+            }
+
+            .custody-panel {
+                border: 1px solid var(--case-border);
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 16px;
+            }
+
+            .custody-panel h3 {
+                margin-top: 0;
+                font-size: 1.05rem;
+            }
+
+            @media (max-width: 900px) {
+                .case-strip {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+
+            @media (max-width: 560px) {
+                .case-strip {
+                    grid-template-columns: 1fr;
+                }
             }
 
             .tweet-text {
@@ -451,15 +510,15 @@ def make_report(
     lines = [
         "DIGITAL FORENSICS HATE SPEECH SCREENING REPORT",
         f"Case ID: {case_id or 'Not specified'}",
-        f"Investigator: {investigator or 'Not specified'}",
+        f"Examiner: {investigator or 'Not specified'}",
         f"Generated: {generated_at}",
         "",
         "Scope",
-        f"- Source records analysed: {len(df)}",
+        f"- Evidence artefacts analysed: {len(df)}",
         f"- Tweet/text column: {text_column}",
-        f"- Flagged records: {len(flagged)}",
-        f"- High risk records: {high}",
-        f"- Medium risk records: {medium}",
+        f"- Flagged artefacts: {len(flagged)}",
+        f"- High risk artefacts: {high}",
+        f"- Medium risk artefacts: {medium}",
         "",
         "Method",
         f"- Detection method used: {model_status}.",
@@ -524,12 +583,12 @@ def risk_explanation(result: dict[str, object]) -> str:
 
 
 def render_manual_test(threshold: int, model_bundle: dict[str, object] | None) -> None:
-    st.subheader("Manual Hate Speech Test")
+    st.subheader("Live Evidence Triage")
     if model_bundle is None:
-        st.write("Type a sentence or tweet below to test it with the keyword baseline detector.")
+        st.write("Type a sentence or tweet artefact below to test it with the keyword baseline detector.")
         st.warning("Train the AI model from a labelled dataset to enable machine-learning predictions.")
     else:
-        st.write("Type a sentence or tweet below to test it with the trained AI hate-speech classifier.")
+        st.write("Type a sentence or tweet artefact below to test it with the trained AI hate-speech classifier.")
 
     example_col, clear_col = st.columns([1, 1])
     with example_col:
@@ -543,11 +602,11 @@ def render_manual_test(threshold: int, model_bundle: dict[str, object] | None) -
         "Sentence to analyse",
         key="manual_sentence",
         height=140,
-        placeholder="Type a tweet or sentence here...",
+        placeholder="Paste or type a tweet artefact here...",
     )
 
     if not sentence.strip():
-        st.info("Enter a sentence to see the risk level, score, indicators, and evidence hash.")
+        st.info("Enter an artefact to see the risk level, score, indicators, and evidence hash.")
         return
 
     if model_bundle is None:
@@ -568,12 +627,12 @@ def render_manual_test(threshold: int, model_bundle: dict[str, object] | None) -
         <div class="tweet-box">
             <div class="tweet-text">{safe_text}</div>
             <div>
-                Classification:
+                Triage classification:
                 <span class="{risk_class(risk)}">{risk} risk</span>
                 &nbsp; | &nbsp; {score_label}: <strong>{score}</strong>
             </div>
             <div class="evidence">
-                <strong>Model:</strong> {model_name}<br>
+                <strong>Analysis engine:</strong> {model_name}<br>
                 <strong>Interpretation:</strong> {risk_explanation(result)}<br>
                 <strong>SHA-256:</strong> {result['text_hash_sha256']}<br>
                 <strong>Hate indicators:</strong> {result['hate_terms']}<br>
@@ -605,16 +664,16 @@ def main() -> None:
     st.markdown(
         """
         <section class="hero">
-            <h1>Tweet Hate Speech Digital Forensics Dashboard</h1>
+            <h1>Digital Evidence Hate Speech Lab</h1>
             <p>
-                Analyse Twitter/X-style datasets, identify potentially hateful or threatening language,
-                preserve repeatable evidence hashes, and prepare concise findings for investigation notes.
+                Examine Twitter/X-style artefacts, train an AI classifier on labelled evidence,
+                preserve repeatable hashes, and prepare case-ready findings for review.
             </p>
             <div class="badge-row">
-                <span class="badge">Dataset triage</span>
-                <span class="badge">AI model training</span>
-                <span class="badge">Evidence hashing</span>
-                <span class="badge">Report export</span>
+                <span class="badge">Evidence intake</span>
+                <span class="badge">AI triage model</span>
+                <span class="badge">SHA-256 hashing</span>
+                <span class="badge">Case report export</span>
             </div>
         </section>
         """,
@@ -622,15 +681,15 @@ def main() -> None:
     )
 
     with st.sidebar:
-        st.header("Case Setup")
+        st.header("Investigation Setup")
         case_id = st.text_input("Case ID", value="COS783-HS-001")
-        investigator = st.text_input("Investigator", value="")
+        investigator = st.text_input("Examiner", value="")
         threshold = st.slider("Flagging threshold", min_value=2, max_value=10, value=4)
-        uploaded_file = st.file_uploader("Upload tweet dataset", type=["csv"])
+        uploaded_file = st.file_uploader("Import evidence CSV", type=["csv"])
         st.caption("CSV files work best when they include a tweet, text, content, or message column.")
 
         st.divider()
-        st.subheader("Baseline Dictionary")
+        st.subheader("Indicator Dictionary")
         st.write(f"Hate indicators: {len(HATE_TERMS)}")
         st.write(f"Threat indicators: {len(THREAT_TERMS)}")
         st.write(f"Target indicators: {len(TARGET_TERMS)}")
@@ -649,6 +708,31 @@ def main() -> None:
     if df.empty:
         st.warning("The dataset is empty. Upload a CSV with tweet text to continue.")
         st.stop()
+
+    acquisition_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    st.markdown(
+        f"""
+        <section class="case-strip">
+            <div class="case-tile">
+                <span>Case Reference</span>
+                <strong>{html.escape(case_id or 'Unassigned')}</strong>
+            </div>
+            <div class="case-tile">
+                <span>Examiner</span>
+                <strong>{html.escape(investigator or 'Not recorded')}</strong>
+            </div>
+            <div class="case-tile">
+                <span>Evidence Source</span>
+                <strong>{html.escape(source_name)}</strong>
+            </div>
+            <div class="case-tile">
+                <span>Acquisition Time</span>
+                <strong>{acquisition_time}</strong>
+            </div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
 
     columns = list(df.columns)
     default_text = choose_default_column(columns, ["tweet", "text", "content", "message", "body"])
@@ -736,7 +820,7 @@ def main() -> None:
         render_metric("Flag Rate", rate, model_status)
 
     tab_manual, tab_overview, tab_evidence, tab_dataset, tab_report = st.tabs(
-        ["Manual Test", "Overview", "Evidence Review", "Dataset Explorer", "Report"]
+        ["Live Triage", "Case Overview", "Evidence Review", "Artifact Table", "Case Report"]
     )
 
     with tab_manual:
@@ -745,7 +829,7 @@ def main() -> None:
     with tab_overview:
         left, right = st.columns([1, 1])
         with left:
-            st.subheader("Risk Distribution")
+            st.subheader("Evidence Risk Distribution")
             chart_data = pd.DataFrame(
                 {
                     "Risk Level": ["High", "Medium", "Low"],
@@ -755,7 +839,7 @@ def main() -> None:
             st.bar_chart(chart_data, x="Risk Level", y="Records", color="#2d6cdf")
 
         with right:
-            st.subheader("Most Common Trigger Terms")
+            st.subheader("Most Common Indicators")
             term_counts: dict[str, int] = {}
             for column in ["hate_terms", "threat_terms", "target_terms"]:
                 for value in results[column]:
@@ -775,7 +859,7 @@ def main() -> None:
             else:
                 st.info("No trigger terms were found at the current threshold.")
 
-        st.subheader("Forensic Notes")
+        st.subheader("Chain-of-Custody Notes")
         st.markdown(
             """
             This dashboard is designed for supervised AI triage. It can train from labelled tweets,
@@ -785,14 +869,41 @@ def main() -> None:
             """
         )
 
+        custody_left, custody_right = st.columns([1, 1])
+        with custody_left:
+            st.markdown(
+                """
+                <div class="custody-panel">
+                    <h3>Evidence Handling Checklist</h3>
+                    <p>1. Preserve the original CSV separately.</p>
+                    <p>2. Record the source, examiner, and acquisition time.</p>
+                    <p>3. Review AI flags manually before making findings.</p>
+                    <p>4. Export the analysed CSV and case report for submission.</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        with custody_right:
+            st.markdown(
+                f"""
+                <div class="custody-panel">
+                    <h3>Current Analysis Method</h3>
+                    <p><strong>{html.escape(model_status)}</strong></p>
+                    <p>Text hashes are generated from the analysed tweet content using SHA-256.</p>
+                    <p>Handles and URLs are redacted in previews while hashes preserve repeatability.</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
     with tab_evidence:
-        st.subheader("Flagged Tweet Review")
+        st.subheader("Flagged Artefact Review")
         risk_filter = st.multiselect(
             "Risk level filter",
             ["High", "Medium", "Low"],
             default=["High", "Medium"],
         )
-        search_term = st.text_input("Search within tweet text")
+        search_term = st.text_input("Search within artefact text")
 
         review_df = results[results["risk_level"].isin(risk_filter)]
         if search_term:
@@ -829,7 +940,7 @@ def main() -> None:
                 )
 
     with tab_dataset:
-        st.subheader("Dataset Explorer")
+        st.subheader("Evidence Artifact Table")
         display_columns = [
             text_column,
             "risk_level",
@@ -852,18 +963,18 @@ def main() -> None:
         csv_buffer = io.StringIO()
         results.to_csv(csv_buffer, index=False)
         st.download_button(
-            "Download analysed CSV",
+            "Export analysed evidence CSV",
             csv_buffer.getvalue(),
             file_name="analysed_tweet_hate_speech.csv",
             mime="text/csv",
         )
 
     with tab_report:
-        st.subheader("Forensic Report Export")
+        st.subheader("Case Report Export")
         report = make_report(results, text_column, case_id, investigator, model_status)
-        st.text_area("Generated report", report, height=430)
+        st.text_area("Generated case report", report, height=430)
         st.download_button(
-            "Download report",
+            "Export case report",
             report,
             file_name=f"{case_id or 'case'}_hate_speech_report.txt",
             mime="text/plain",

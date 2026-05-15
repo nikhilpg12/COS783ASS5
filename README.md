@@ -1,6 +1,6 @@
-# Tweet Hate Speech Digital Forensics Dashboard
+# Digital Evidence Hate Speech Lab
 
-A Streamlit application for analysing Twitter/X-style CSV datasets as part of a digital forensics hate-speech detection workflow.
+A Streamlit application for examining Twitter/X-style CSV artefacts as part of a digital forensics hate-speech detection workflow.
 
 ## Features
 
@@ -12,7 +12,8 @@ A Streamlit application for analysing Twitter/X-style CSV datasets as part of a 
 - Review high and medium risk records.
 - Generate SHA-256 hashes for analysed tweet text.
 - Redact handles and URLs in evidence previews.
-- Export an analysed CSV and a plain-text forensic report.
+- Track case metadata such as case ID, examiner, evidence source, and acquisition time.
+- Export an analysed evidence CSV and a plain-text forensic case report.
 
 ## Run
 
