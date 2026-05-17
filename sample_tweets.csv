@@ -1,9 +1,0 @@
-tweet_id,created_at,username,tweet,label
-1001,2026-04-01 08:31:00,@case_sample_01,"I strongly disagree with this policy, but people should debate it peacefully.",non-hate
-1002,2026-04-01 08:45:00,@case_sample_02,"Those people are parasites and should be removed from our community!",hate
-1003,2026-04-01 09:02:00,@case_sample_03,"Great match last night. The team finally looked organised.",non-hate
-1004,2026-04-01 09:18:00,@case_sample_04,"We need to attack that minority group online until they leave.",hate
-1005,2026-04-01 10:10:00,@case_sample_05,"Please report threats when you see them and support affected users.",non-hate
-1006,2026-04-01 10:44:00,@case_sample_06,"They are inferior trash and everyone knows it.",hate
-1007,2026-04-01 11:12:00,@case_sample_07,"The city needs better moderation tools for harmful posts.",non-hate
-1008,2026-04-01 11:51:00,@case_sample_08,"Burn their homes and destroy their place of worship!",hate
