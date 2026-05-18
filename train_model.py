@@ -252,20 +252,31 @@ def main():
         stratify=stratify
     )
 
+    custom_weights = {
+        'normal': 1.0,
+        'offensive': 1.0,
+        'toxic': 1.2,
+        'misinformation': 1.0,
+        'spam': 2.0,
+        'hate': 2.5  # Lower this slightly if it was too high under "balanced" automatically
+    }
+
     model = Pipeline([
         (
             "tfidf",
             TfidfVectorizer(
                 lowercase=True,
                 stop_words="english",
-                ngram_range=(1, 2),
-                max_features=30000,
+                ngram_range=(1, 3),
+                max_features=40000,
                 min_df=2
             )
         ),
         (
             "classifier",
             LogisticRegression(
+                penalty="l2",
+                C=2.0,
                 max_iter=1200,
                 class_weight="balanced",
                 random_state=42
