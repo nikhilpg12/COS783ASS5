@@ -254,11 +254,11 @@ def main():
 
     custom_weights = {
         'normal': 1.0,
-        'offensive': 1.0,
+        'offensive': 1.1,
         'toxic': 1.2,
         'misinformation': 1.0,
-        'spam': 2.0,
-        'hate': 2.5  # Lower this slightly if it was too high under "balanced" automatically
+        'spam': 1.8,
+        'hate': 1.5  # Lower this slightly if it was too high under "balanced" automatically
     }
 
     model = Pipeline([
@@ -278,7 +278,7 @@ def main():
                 penalty="l2",
                 C=2.0,
                 max_iter=1200,
-                class_weight="balanced",
+                class_weight=custom_weights,
                 random_state=42
             )
         )
