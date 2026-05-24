@@ -50,13 +50,17 @@ def inject_css():
             :root {
                 --case-navy: #111820;
                 --case-ink: #1d2937;
-                --case-border: #c8d2df;
-                --case-panel: #f3f6f9;
-                --case-accent: #1f7a8c;
-                --case-danger: #b42318;
-                --case-warn: #b54708;
-                --case-ok: #067647;
+                --case-accent: #004B87;
+                
+                --case-danger: #e04538;
+                --case-warn: #e66c17;
+                --case-ok: #12b76a;
                 --case-lime: #9fd356;
+
+                --theme-bg: var(--st-background-color, #ffffff);
+                --theme-text: var(--st-text-color, #31333F);
+                --theme-border: var(--st-border-color, #c8d2df);
+                --theme-secondary-bg: var(--st-secondary-background-color, #f3f6f9);
             }
 
             .main .block-container {
@@ -68,18 +72,17 @@ def inject_css():
             h1, h2, h3 {
                 letter-spacing: 0;
             }
-
+            
             .hero {
                 background:
-                    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
-                    linear-gradient(135deg, #0d131a 0%, #172333 58%, #223a42 100%);
-                background-size: 28px 28px, 28px 28px, auto;
-                border: 1px solid rgba(255,255,255,0.16);
+                    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                    linear-gradient(135deg, #2d141b 0%, #451e29 58%, #632235 100%);
+                border: 1px solid rgba(255,255,255,0.2);
                 border-radius: 10px;
-                padding: 28px 30px;
-                color: #ffffff;
-                box-shadow: 0 18px 45px rgba(19, 33, 55, 0.18);
+                padding: 22px 30px;
+                color: #ffffff !important;
+                box-shadow: 0 18px 45px rgba(45, 20, 27, 0.15);
                 margin-bottom: 22px;
             }
 
@@ -87,12 +90,12 @@ def inject_css():
                 margin: 0 0 8px 0;
                 font-size: 2.35rem;
                 line-height: 1.1;
-                color: #ffffff;
+                color: #ffffff !important;
             }
 
             .hero p {
                 margin: 0;
-                color: #dce7f6;
+                color: #dce7f6 !important;
                 max-width: 980px;
                 font-size: 1.03rem;
             }
@@ -111,35 +114,37 @@ def inject_css():
                 padding: 6px 10px;
                 background: rgba(255,255,255,0.11);
                 border: 1px solid rgba(255,255,255,0.18);
-                color: #f6f9ff;
+                color: #f6f9ff !important;
                 font-size: 0.84rem;
             }
 
             .metric-card {
-                border: 1px solid var(--case-border);
-                background: #ffffff;
+                border: 1px solid var(--theme-border);
+                background: var(--theme-bg);
                 border-radius: 8px;
                 padding: 16px 18px;
                 min-height: 112px;
-                box-shadow: 0 10px 24px rgba(27, 39, 55, 0.06);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
             }
 
             .metric-card span {
-                color: #5c6675;
+                color: var(--theme-text);
+                opacity: 0.7;
                 font-size: 0.82rem;
                 text-transform: uppercase;
                 font-weight: 700;
             }
 
             .metric-card strong {
-                color: var(--case-ink);
+                color: var(--theme-text);
                 display: block;
                 font-size: 2rem;
                 margin-top: 5px;
             }
 
             .metric-card small {
-                color: #667085;
+                color: var(--theme-text);
+                opacity: 0.6;
             }
 
             .case-strip {
@@ -150,16 +155,17 @@ def inject_css():
             }
 
             .case-tile {
-                border: 1px solid var(--case-border);
-                background: #ffffff;
+                border: 1px solid var(--theme-border);
+                background: var(--theme-bg);
                 border-radius: 8px;
                 padding: 13px 14px;
-                box-shadow: 0 8px 20px rgba(27, 39, 55, 0.05);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             }
 
             .case-tile span {
                 display: block;
-                color: #667085;
+                color: var(--theme-text);
+                opacity: 0.6;
                 font-size: 0.75rem;
                 text-transform: uppercase;
                 font-weight: 800;
@@ -167,71 +173,75 @@ def inject_css():
 
             .case-tile strong {
                 display: block;
-                color: var(--case-ink);
+                color: var(--theme-text);
                 margin-top: 5px;
                 word-break: break-word;
             }
 
             .tweet-box {
-                border: 1px solid var(--case-border);
+                border: 1px solid var(--theme-border);
                 border-left: 5px solid var(--case-accent);
-                background: #ffffff;
+                background: var(--theme-bg);
                 border-radius: 8px;
                 padding: 18px;
                 margin-bottom: 14px;
-                box-shadow: 0 8px 20px rgba(27, 39, 55, 0.05);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+                color: var(--theme-text);
             }
 
             .tweet-text {
-                color: #192232;
+                color: var(--theme-text);
                 font-size: 1.02rem;
                 line-height: 1.55;
                 margin-bottom: 13px;
             }
 
             .evidence {
-                background: var(--case-panel);
-                border: 1px solid var(--case-border);
+                background: var(--theme-secondary-bg);
+                border: 1px solid var(--theme-border);
                 border-radius: 8px;
                 padding: 14px 16px;
                 margin-top: 12px;
+                color: var(--theme-text);
             }
 
             .custody-panel {
-                border: 1px solid var(--case-border);
-                background: #ffffff;
+                border: 1px solid var(--theme-border);
+                background: var(--theme-bg);
                 border-radius: 8px;
                 padding: 16px;
                 min-height: 185px;
-                box-shadow: 0 8px 20px rgba(27, 39, 55, 0.05);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+                color: var(--theme-text);
             }
 
             .custody-panel h3 {
                 margin-top: 0;
                 font-size: 1.05rem;
+                color: var(--theme-text);
             }
 
             .risk-high {
-                color: var(--case-danger);
+                color: var(--case-danger) !important;
                 font-weight: 800;
             }
 
             .risk-medium {
-                color: var(--case-warn);
+                color: var(--case-warn) !important;
                 font-weight: 800;
             }
 
             .risk-low {
-                color: var(--case-ok);
+                color: var(--case-ok) !important;
                 font-weight: 800;
             }
 
             div[data-testid="stMetric"] {
-                background: #ffffff;
-                border: 1px solid var(--case-border);
+                background: var(--theme-bg);
+                border: 1px solid var(--theme-border);
                 border-radius: 8px;
                 padding: 15px 16px;
-                box-shadow: 0 8px 20px rgba(27, 39, 55, 0.05);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
             }
 
             .stTabs [data-baseweb="tab-list"] {
@@ -516,7 +526,7 @@ def main():
         st.write("Rows used:", model_bundle.get("rows_used", "Unknown"))
         accuracy = model_bundle.get("accuracy", None)
         if accuracy is not None:
-            st.write("Test accuracy:", f"{accuracy * 100:.1f}%")
+            st.write("Test accuracy:", f"{accuracy * 100:.2f}%")
 
         st.divider()
         st.subheader("Detection Layers")

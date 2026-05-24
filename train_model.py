@@ -15,9 +15,9 @@ MODEL_PATH = "forensic_social_media_model.pkl"
 def clean_text(text):
     text = str(text).lower()
     text = re.sub(r"http\S+|www\S+", "", text)
-    text = re.sub(r"@\w+", "", text)
+    text = re.sub(r"@\w+", "[USER]", text)
     text = re.sub(r"#", "", text)
-    text = re.sub(r"[^a-zA-Z\s]", "", text)
+    text = re.sub(r"[^a-zA-Z\s\[\]]", "", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
@@ -203,6 +203,60 @@ def load_fakenews_dataset():
 
     return limit_rows(df, 10000)
 
+def load_combined_hate():
+    path = "data/twitter_hate/3DatasetsCombined.csv"
+    if not os.path.exists(path):
+        return None
+
+    print("Loading combined hate dataset...")
+    df = pd.read_csv(path)
+    
+    if "class" in df.columns:
+        df = df.rename(columns={"class": "raw_label"})
+    elif "label" in df.columns:
+        df = df.rename(columns={"label": "raw_label"})
+    else:
+        print(f"Columns found in dataset: {df.columns.tolist()}")
+        return None
+    
+    def map_label(val):
+        val = str(val).lower().strip()
+        if val in ['1', 'hateful', 'hate']:
+            return "hate"
+        elif val in ['0', 'offensive', 'neither']:
+            return "offensive"
+        else:
+            return "normal"
+
+    df["label"] = df["raw_label"].apply(map_label)
+    
+    return limit_rows(df[["text", "label"]], 10000)
+
+def load_measuring_hate_speech_dataset():
+    path = "data/twitter_hate/measuring_hate_speech.csv"
+
+    if not os.path.exists(path):
+        return None
+
+    print("Loading UC Berkeley Measuring Hate Speech dataset...")
+    
+    df = pd.read_csv(path, usecols=["text", "hate_speech_score"])
+
+    df = df.groupby("text", as_index=False)["hate_speech_score"].mean()
+
+    def map_berkeley_label(score):
+        if score > 1.0:
+            return "hate"
+        elif score > 0.0:
+            return "offensive"
+        else:
+            return "normal"
+
+    df["label"] = df["hate_speech_score"].apply(map_berkeley_label)
+    
+    df = df[["text", "label"]].dropna()
+    
+    return limit_rows(df, 15000)
 
 def main():
     print("\n=== COS 783 SOCIAL MEDIA ANALYSIS MODEL TRAINING ===\n")
@@ -252,22 +306,33 @@ def main():
         stratify=stratify
     )
 
+    custom_weights = {
+        'normal': 1.0,
+        'offensive': 1.1,
+        'toxic': 1.2,
+        'misinformation': 1.0,
+        'spam': 2.0,
+        'hate': 4.0
+    }
+
     model = Pipeline([
         (
             "tfidf",
             TfidfVectorizer(
                 lowercase=True,
                 stop_words="english",
-                ngram_range=(1, 2),
-                max_features=30000,
+                ngram_range=(1, 3),
+                max_features=40000,
                 min_df=2
             )
         ),
         (
             "classifier",
             LogisticRegression(
-                max_iter=1200,
-                class_weight="balanced",
+                penalty="l2",
+                C=5.0,
+                max_iter=2000,
+                class_weight=custom_weights,
                 random_state=42
             )
         )
@@ -275,6 +340,19 @@ def main():
 
     print("\nTraining model...")
     model.fit(X_train, y_train)
+
+    proba = model.predict_proba(X_test)
+    classes = model.classes_.tolist()
+    hate_idx = classes.index("hate")
+
+    HATE_THRESHOLD = 0.15
+
+    custom_preds = []
+    for prob_row in proba:
+        if prob_row[hate_idx] >= HATE_THRESHOLD:
+            custom_preds.append("hate")
+        else:
+            custom_preds.append(classes[prob_row.argmax()])
 
     print("Testing model...")
     predictions = model.predict(X_test)
